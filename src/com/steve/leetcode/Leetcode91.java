@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class Leetcode91 {
 
-    class Solution {
+    class SolutionTopDown {
         public int numDecodings(String s) {
             int[] cache = new int[s.length()];
             Arrays.fill(cache, -1);
@@ -33,6 +33,82 @@ public class Leetcode91 {
             }
             return cache[idx] = result;
         }
+    }
+
+    class SolutionBottomUp {
+
+        public int numDecodings(String s) {
+            if (s.length() == 0) {
+                return 0;
+            }
+            if (s.length() == 1) {
+                if (s.charAt(0) == '0') {
+                    return 0;
+                }
+                return 1;
+            }
+
+            int[] dp = new int[s.length() + 1];
+            dp[0] = 1;
+
+            for (int i = 0; i < s.length(); i++) {
+                int num = s.charAt(i) - '0';
+                if (num == 0) {
+                    continue;
+                }
+                if (i + 1 <= s.length()) {
+                    dp[i + 1] += dp[i];
+                }
+                if (i + 1 < s.length())  {
+                    num = num * 10 + (s.charAt(i + 1) - '0');
+                    if (num <= 26) {
+                        dp[i + 2] += dp[i];
+                    }
+                }
+            }
+            return dp[s.length()];
+        }
+
+    }
+
+    class SolutionBottomUpSpaceOpt {
+
+        public int numDecodings(String s) {
+            if (s.length() == 0) {
+                return 0;
+            }
+            if (s.length() == 1) {
+                if (s.charAt(0) == '0') {
+                    return 0;
+                }
+                return 1;
+            }
+
+            int dp0 = 1;
+            int dp1 = 0;
+            int dp2 = 0;
+
+            for (int i = 0; i < s.length(); i++) {
+                int num = s.charAt(i) - '0';
+                if (num != 0) {
+                    if (i + 1 <= s.length()) {
+                        dp1 += dp0;
+                    }
+                    if (i + 1 < s.length())  {
+                        num = num * 10 + (s.charAt(i + 1) - '0');
+                        if (num <= 26) {
+                            dp2 += dp0;
+                        }
+                    }
+                }
+
+                dp0 = dp1;
+                dp1 = dp2;
+                dp2 = 0;
+            }
+            return dp0;
+        }
+
     }
 
 }
